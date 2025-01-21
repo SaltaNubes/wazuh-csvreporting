@@ -1,0 +1,34 @@
+# Report 1
+report_win_sysmon:
+  event_source: 
+    index_pattern: "wazuh-alerts-*"
+    query: "data.win.system.channel:\"Microsoft-Windows-Sysmon/Operational\" AND data.win.system.eventID:\"100\""
+
+  report_params:
+    last: "7d" # h => hours, d => days ---> related with cron job
+    fields: ["@timestamp", "agent.name", "data.win.eventdata.parentCommandLine", "data.win.eventdata.hashes"]
+
+    enable_field_renaming: false # false / true - lowercase
+    rename_fields_to: ["timestamp", "agente_name", "command_line", "hash"]
+
+  time_settings:
+    timezone: "America/Guatemala"
+    time_format: "%Y-%m-%d %H:%M"
+
+  aggregation:
+    enabled: false # false / true - lowercase ---> add count field
+    frequency: "30" # minutes
+
+  notification_email:
+    subject: "Weekly Report"
+    body: "Hi Team, \nWazuh ReportGenAutomation"
+    sender_email: "report@wazuh.local"
+    receiver_email: 
+      - "admin@abc.org"
+      - "support@abc.org"
+          
+# Report 2
+## report_fim:
+##   event_source: 
+##     index_pattern: "wazuh-alerts-*"
+##     query: "rule.groups:syscheck"

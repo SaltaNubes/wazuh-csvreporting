@@ -1,0 +1,144 @@
+# Report 1
+report_win_gestion_usuarios:
+  event_source:
+    index_pattern: "wazuh-alerts-*"
+    query: "(data.win.system.eventID:(\"4725\" OR \"4722\" OR \"4720\" OR \"4726\") AND data.win.eventdata.targetUserName: * AND NOT data.win.eventdata.targetUserName : *$) OR (data.win.system.eventID:(\"4740\" OR \"4767\" OR \"4724\") AND NOT data.win.eventdata.targetUserName : *$)"
+  report_params:
+    last: "1d" # h => hours, d => days ---> related with cron job
+    fields: ["@timestamp", "rule.description","data.win.system.eventID", "data.win.eventdata.subjectUserName", "data.win.eventdata.targetUserName", "data.win.system.computer","rule.level", "data.win.eventdata.targetDomainName"]
+    enable_field_renaming: false # false / true - lowercase
+    rename_fields_to: ["date", "message","windowsEventID", "user", "targerUser", "destinationHostName", "severity", "domain"]
+  time_settings:
+    timezone: "America/Guatemala"
+    time_format: "%Y-%m-%d %H:%M"
+  aggregation:
+    enabled: false # false / true - lowercase ---> add count field
+    frequency: "30" # minutes
+  notification_email:
+    subject: "GT ALKEMY AD GESTION DE USUARIOS"
+    body: "Hi Team, \nWazuh ReportGenAutomation"
+    sender_email: "alertas-alkemy@mail.develsecurity.com"
+    receiver_emails:
+      - "lvillalta@devel.group"
+      - "socar@devel.group"
+      - "cjramirez@devel.group"
+# Report 2
+report_win_gestion_grupos:
+  event_source:
+    index_pattern: "wazuh-alerts-*"
+    query: "data.win.system.eventID:(\"4728\" OR \"4729\") AND data.win.eventdata.targetUserName: * AND NOT data.win.eventdata.targetUserName : *$"
+  report_params:
+    last: "1d" # h => hours, d => days ---> related with cron job
+    fields: ["@timestamp", "rule.description","data.win.system.eventID", "data.win.eventdata.subjectUserName", "data.win.eventdata.memberName", "data.win.eventdata.targetUserName", "data.win.eventdata.targetDomainName","rule.level"]
+    enable_field_renaming: false # false / true - lowercase
+    rename_fields_to: ["date", "message","windowsEventID", "user", "targerUser", "targetUserGroup", "domain", "severity"]
+  time_settings:
+    timezone: "America/Guatemala"
+    time_format: "%Y-%m-%d %H:%M"
+  aggregation:
+    enabled: false # false / true - lowercase ---> add count field
+    frequency: "30" # minutes
+  notification_email:
+    subject: "GT ALKEMY AD GESTION DE GRUPOS"
+    body: "Hi Team, \nWazuh ReportGenAutomation"
+    sender_email: "alertas-alkemy@mail.develsecurity.com"
+    receiver_emails:
+      - "lvillalta@devel.group"
+      - "socar@devel.group"
+      - "cjramirez@devel.group"
+# Report 3
+report_win_login_fails:
+  event_source:
+    index_pattern: "wazuh-alerts-*"
+    query: "data.win.system.eventID: \"4625\" AND data.win.eventdata.targetUserName: * AND NOT data.win.eventdata.targetUserName : *$"
+  report_params:
+    last: "1d" # h => hours, d => days ---> related with cron job
+    fields: ["@timestamp", "data.win.system.eventID","rule.description", "data.win.eventdata.targetUserName", "data.win.system.computer", "data.win.eventdata.workstationName","agent.ip", "data.win.eventdata.ipAddress", "data.win.eventdata.status", "data.win.eventdata.subStatus", "data.win.eventdata.failureReason", "data.win.eventdata.logonType", "agent.ip", "rule.level"]
+    enable_field_renaming: false # false / true - lowercase
+    rename_fields_to: ["date", "windowsEventID","message", "user", "destinationHostName", "sourceHostName", "reportingIP", "sourceIP", "status", "subStatus", "reasonForError", "winLogonType", "destinaionaddress", "eventSeverity"]
+  time_settings:
+    timezone: "America/Guatemala"
+    time_format: "%Y-%m-%d %H:%M"
+  aggregation:
+    enabled: false # false / true - lowercase ---> add count field
+    frequency: "30" # minutes
+  notification_email:
+    subject: "GT ALKEMY AD LOGIN FALLIDO"
+    body: "Hi Team, \nWazuh ReportGenAutomation"
+    sender_email: "alertas-alkemy@mail.develsecurity.com"
+    receiver_emails:
+      - "lvillalta@devel.group"
+      - "socar@devel.group"
+      - "cjramirez@devel.group"
+# Report 4
+report_win_kerberos:
+  event_source:
+    index_pattern: "wazuh-alerts-*"
+    query: "data.win.system.eventID: 4771 AND NOT data.win.eventdata.targetUserName: *$"
+  report_params:
+    last: "1d" # h => hours, d => days ---> related with cron job
+    fields: ["@timestamp", "data.win.system.eventID","data.win.eventdata.status", "rule.description","data.win.eventdata.targetUserName", "data.win.eventdata.ipAddress", "agent.ip","agent.name", "rulelevel"]
+    enable_field_renaming: false # false / true - lowercase
+    rename_fields_to: ["date", "windowsEventID","failCodeString", "message", "user", "sourceIP", "destinationIP", "destinationHostName", "severity"]
+  time_settings:
+    timezone: "America/Guatemala"
+    time_format: "%Y-%m-%d %H:%M"
+  aggregation:
+    enabled: false # false / true - lowercase ---> add count field
+    frequency: "30" # minutes
+  notification_email:
+    subject: "GT ALKEMY AD KERBEROS"
+    body: "Hi Team, \nWazuh ReportGenAutomation"
+    sender_email: "alertas-alkemy@mail.develsecurity.com"
+    receiver_emails:
+      - "lvillalta@devel.group"
+      - "socar@devel.group"
+      - "cjramirez@devel.group"
+# Report 5
+reporte_fortigate_IPS:
+  event_source:
+    index_pattern: "wazuh-alerts-*"
+    query: "data.subtype:(\"ips\")"
+  report_params:
+    last: "1d" # h => hours, d => days ---> related with cron job
+    fields: ["@timestamp", "decoder.name", "data.attack", "data.attackid", "data.srcip", "data.dstip", "data.dstport", "data.severity", "data.dstcountry", "data.dstcountry", "data.dstintf", "GeoLocation.city_nam", "data.srccountry", "data.srcintf", "data.proto", "data.action", "data.eventtype", "rule.id", "data.profile"]
+    enable_field_renaming: false # false / true - lowercase
+    rename_fields_to: ["date", "reportingDevice", "attackName", "signatureID", "sourceIP", "destinationIP", "destinationPort", "eventSeverity", "destinationCity", "destinationCountry", "destInferfaceNme", "sourceCity", "sourceCountry", "sourceInterfaceName", "tcpIpServiceName", "deviceAction", "threatType", "eventID", "sourceUser"]
+  time_settings:
+    timezone: "America/Guatemala"
+    time_format: "%Y-%m-%d %H:%M"
+  aggregation:
+    enabled: false # false / true - lowercase ---> add count field
+    frequency: "30" # minutes
+  notification_email:
+    subject: "GT ALKEMY IPS FORTIGATE"
+    body: "Hi Team, \nWazuh ReportGenAutomation"
+    sender_email: "alertas-alkemy@mail.develsecurity.com"
+    receiver_emails:
+      - "lvillalta@devel.group"
+      - "socar@devel.group"
+      - "cjramirez@devel.group"
+# Report 6
+report_vpn_ssl:
+  event_source:
+    index_pattern: "wazuh-alerts-*"
+    query: "data.subtype: vpn AND data.action: (\"ssl-login-fail\" OR \"tunnel-up\")"
+  report_params:
+    last: "1d" # h => hours, d => days ---> related with cron job
+    fields: ["@timestamp","data.devname", "data.dstuser", "data.group", "data.ip", "data.action", "data.srccountry"]
+    enable_field_renaming: false # false / true - lowercase
+    rename_fields_to: ["date", "Equipo", "user", "group","sourceIP","action","country"]
+  time_settings:
+    timezone: "America/Guatemala"
+    time_format: "%Y-%m-%d %H:%M"
+  aggregation:
+    enabled: false # false / true - lowercase ---> add count field
+    frequency: "30" # minutes
+  notification_email:
+    subject: "GT ALKEMY CONEXIONES VPN"
+    body: "Hi Team, \nWazuh ReportGenAutomation"
+    sender_email: "alertas-alkemy@mail.develsecurity.com"
+    receiver_emails:
+      - "lvillalta@devel.group"
+      - "socar@devel.group"
+      - "cjramirez@devel.group"
